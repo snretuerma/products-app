@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('category');
             $table->text('description');
-            $table->text('images')->nullabel();
+            $table->text('images')->nullable();
             $table->dateTime('date_time');
             $table->timestamps();
             $table->softDeletes();

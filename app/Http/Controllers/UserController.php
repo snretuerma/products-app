@@ -2,29 +2,30 @@
 
 namespace App\Http\Controllers;
 
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use App\Http\Requests\StoreProductRequest;
-use App\Http\Requests\UpdateProductRequest;
-use App\Models\Product;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
+use App\Models\User;
 
-class ProductController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $products = Product::query();
-        if (request()->has('name') || request()->has('description') || request()->has('category'))
+        $users = User::query();
+        if (request()->has('name') || request()->has('username') || request()->has('email'))
         {
-            $products->where('name', 'like', '%'.request('name').'%')
-                ->where('description', 'like', '%'.request('description').'%')
-                ->where('category', 'like', '%'.request('category').'%');
+            $users->where('name', 'like', '%'.request('name').'%')
+                ->where('username', 'like', '%'.request('username').'%')
+                ->where('email', 'like', '%'.request('email').'%');
         }
-        return $products->orderBy('id', 'DESC')->paginate(10);
+        return $users->orderBy('id', 'DESC')->paginate(10);
     }
 
     /**
@@ -40,20 +41,19 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreProductRequest  $request
+     * @param  \App\Http\Requests\StoreUserRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreProductRequest $request)
+    public function store(StoreUserRequest $request)
     {
         DB::beginTransaction();
         try
         {
-            $product = Product::create([
+            $user = User::create([
                 'name' => $request->name,
-                'category' => $request->category,
-                'description' => $request->description,
-                'images' => $request->images,
-                'date_time' => $request->date_time
+                'username' => $request->username,
+                'email' => $request->email,
+                'password' => $request->password,
             ]);
         }
         catch(\Throwable $error)
@@ -61,7 +61,7 @@ class ProductController extends Controller
             DB::rollBack();
             return response()->json(
                 [
-                    'message' => "Failed to add product",
+                    'message' => "Failed to add user",
                     'type' => 'error',
                     'error' => $error
                 ],
@@ -71,7 +71,7 @@ class ProductController extends Controller
         DB::commit();
         return response()->json(
             [
-                'message' => "{$product->name} has been successfully created",
+                'message' => "{$user->name} has been successfully created",
                 'type' => 'success',
             ],
             200
@@ -81,21 +81,21 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Product  $product
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(Product $product)
+    public function show(User $user)
     {
-        return $product;
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Product  $product
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit(Product $product)
+    public function edit(User $user)
     {
         //
     }
@@ -103,16 +103,16 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateProductRequest  $request
-     * @param  \App\Models\Product  $product
+     * @param  \App\Http\Requests\UpdateUserRequest  $request
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateProductRequest $request, int $id)
+    public function update(UpdateUserRequest $request, User $user)
     {
         DB::beginTransaction();
         try
         {
-            $product = Product::findOrFail($id)->update($request->all());
+            $user = Product::findOrFail($id)->update($request->all());
         }
         catch(\Throwable $error)
         {
@@ -129,7 +129,7 @@ class ProductController extends Controller
         DB::commit();
         return response()->json(
             [
-                'message' => "{$product->name} has been successfully updated",
+                'message' => "{$user->name} has been successfully updated",
                 'type' => 'success',
             ],
             200
@@ -139,15 +139,15 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Product  $product
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy(User $user)
     {
         DB::beginTransaction();
         try
         {
-            $product->delete();
+            $user->delete();
         }
         catch(\Throwable $th)
         {
@@ -164,7 +164,7 @@ class ProductController extends Controller
         DB::commit();
         return response()->json(
             [
-                'message' => "{$product->name} has been successfully deleted",
+                'message' => "{$user->name} has been successfully deleted",
                 'type' => 'success',
             ],
             200
