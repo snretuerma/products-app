@@ -75,9 +75,7 @@
 
 -   [PHP](https://www.php.net/) : `v.8.0.2`
 -   [Laravel](https://github.com/laravel/framework) : `v.9.19`
--   [Laravel-Breeze](https://laravel.com/docs/9.x/starter-kits#laravel-breeze) : `v.1.17`
--   [Laravel-Inertia](https://github.com/inertiajs/inertia-laravel) : `v.0.6.3`
 -   [Vue](https://github.com/vuejs/) : `v.3.2.41`
 -   [Vite](https://laravel.com/docs/9.x/vite) : `v.4.0.0`
--   [TailwindCSS](https://github.com/vuejs/) : `v.3.2.1`
--   [Flowbite](1.6.0) : `v.3.2.1`
+<!-- -   [TailwindCSS](https://github.com/vuejs/) : `v.3.2.1`
+-   [Flowbite](1.6.0) : `v.3.2.1` -->
