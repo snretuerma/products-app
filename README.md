@@ -75,7 +75,7 @@
 
 -   [PHP](https://www.php.net/) : `v8.1.13`
 -   [Laravel](https://github.com/laravel/framework) : `v9.46.0`
--   [Vue](https://github.com/vuejs/) : `v.3.2.41`
--   [Vite](https://laravel.com/docs/9.x/vite) : `v.4.0.0`
+-   [Vue](https://github.com/vuejs/) : `v3.2.36`
+-   [Vite](https://laravel.com/docs/9.x/vite) : `v4.0.0`
 <!-- -   [TailwindCSS](https://github.com/vuejs/) : `v.3.2.1`
 -   [Flowbite](1.6.0) : `v.3.2.1` -->
