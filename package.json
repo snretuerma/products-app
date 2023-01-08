@@ -12,8 +12,12 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
+        "@ant-design/icons-vue": "^6.1.0",
         "@vitejs/plugin-vue": "^4.0.0",
+        "ant-design-vue": "^3.2.15",
+        "pinia": "^2.0.28",
         "vue": "^3.2.36",
-        "vue-loader": "^17.0.1"
+        "vue-loader": "^17.0.1",
+        "vue-router": "^4.1.6"
     }
 }
