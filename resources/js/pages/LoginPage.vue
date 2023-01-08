@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { defineComponent, reactive, computed } from "vue";
+import { reactive, computed } from "vue";
 import { UserOutlined, LockOutlined } from "@ant-design/icons-vue";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
@@ -98,7 +98,7 @@ export default {
                         "auth",
                         JSON.stringify(authStore.$state)
                     );
-                    router.push({ name: "dashboard" });
+                    router.push({ name: "products" });
                 });
             });
         };
