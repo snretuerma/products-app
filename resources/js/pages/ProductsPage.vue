@@ -32,14 +32,12 @@
                             />
                         </template>
                         <template #actions>
-                            <setting-outlined
-                                key="setting"
-                                @click.prevent="
-                                    console.log('show confirmation dialog')
-                                "
-                            />
+                            <setting-outlined key="setting" />
                             <edit-outlined key="edit" />
-                            <delete-outlined key="ellipsis" />
+                            <delete-outlined
+                                key="delete"
+                                @click.prevent="showDeleteModal(item)"
+                            />
                         </template>
                         <a-card-meta
                             :title="item.name"
@@ -63,12 +61,31 @@
                 /> -->
             </template>
         </a-list>
+        <a-modal
+            v-model:visible="delete_modal_visible"
+            title="Delete Item"
+            ok-text="Confirm"
+            cancel-text="Cancel"
+            @ok="confirmDeleteModal"
+            @cancel="hideDeleteModal"
+        >
+            <p>Are you sure you want to delete this item :</p>
+            <p>
+                <a-space direction="vertical">
+                    Name: <strong>{{ selected_item?.name }}</strong>
+                    Category:
+
+                    <a-tag color="pink">{{ selected_item?.category }}</a-tag>
+                </a-space>
+            </p>
+        </a-modal>
     </div>
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { message } from "ant-design-vue";
 import {
     EditOutlined,
     DeleteOutlined,
@@ -82,6 +99,8 @@ export default {
     },
     setup() {
         const router = useRouter();
+        let delete_modal_visible = ref(false);
+        let selected_item = ref({});
         let product_list = ref([]);
         let loading = ref(true);
 
@@ -91,6 +110,30 @@ export default {
             loading.value = false;
         };
 
+        const showDeleteModal = (item) => {
+            delete_modal_visible.value = true;
+            selected_item.value = item;
+        };
+
+        const hideDeleteModal = () => {
+            delete_modal_visible.value = false;
+        };
+
+        const confirmDeleteModal = async () => {
+            const response = await axios.delete(
+                `/api/products/${selected_item.value.id}`
+            );
+            await fetchList();
+            hideDeleteModal();
+            displayMessage(response.data);
+        };
+
+        const displayMessage = (value) => {
+            value.type == "success"
+                ? message.success(value.message)
+                : message.error(value.message);
+        };
+
         onMounted(() => {
             fetchList();
         });
@@ -98,7 +141,11 @@ export default {
         return {
             product_list,
             loading,
-            fetchList,
+            selected_item,
+            delete_modal_visible,
+            showDeleteModal,
+            hideDeleteModal,
+            confirmDeleteModal,
         };
     },
 };
