@@ -18,13 +18,12 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $products = Product::query();
-        if (request()->has('name') || request()->has('description') || request()->has('category'))
-        {
-            $products->where('name', 'like', '%'.request('name').'%')
-                ->where('description', 'like', '%'.request('description').'%')
-                ->where('category', 'like', '%'.request('category').'%');
+        if (request()->has('name') || request()->has('description') || request()->has('category')) {
+            $products->where('name', 'like', '%' . request('name') . '%')
+                ->where('description', 'like', '%' . request('description') . '%')
+                ->where('category', 'like', '%' . request('category') . '%');
         }
-        return $products->orderBy('id', 'DESC')->paginate(10);
+        return $products->orderBy('id', 'DESC')->paginate(6);
     }
 
     /**
@@ -46,8 +45,7 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         DB::beginTransaction();
-        try
-        {
+        try {
             $product = Product::create([
                 'name' => $request->name,
                 'category' => $request->category,
@@ -55,9 +53,7 @@ class ProductController extends Controller
                 'images' => $request->images,
                 'date_time' => $request->date_time
             ]);
-        }
-        catch(\Throwable $error)
-        {
+        } catch (\Throwable $error) {
             DB::rollBack();
             return response()->json(
                 [
@@ -110,12 +106,9 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, int $id)
     {
         DB::beginTransaction();
-        try
-        {
+        try {
             $product = Product::findOrFail($id)->update($request->all());
-        }
-        catch(\Throwable $error)
-        {
+        } catch (\Throwable $error) {
             DB::rollBack();
             return response()->json(
                 [
@@ -145,12 +138,9 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         DB::beginTransaction();
-        try
-        {
+        try {
             $product->delete();
-        }
-        catch(\Throwable $th)
-        {
+        } catch (\Throwable $error) {
             DB::rollBack();
             return response()->json(
                 [

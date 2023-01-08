@@ -9,7 +9,7 @@ const Login = () => import('@/pages/LoginPage.vue')
 const AuthLayout = () => import('@/layouts/AuthLayout.vue')
 
 /* Authenticated Component */
-const Dashboard = () => import('@/pages/DashboardPage.vue')
+const Products = () => import('@/pages/ProductsPage.vue')
 
 const routes = [
     {
@@ -29,11 +29,11 @@ const routes = [
         },
         children: [
             {
-                name: 'dashboard',
-                path: '/',
-                component: Dashboard,
+                name: 'products',
+                path: '/products',
+                component: Products,
                 meta: {
-                    title: `Dashboard`
+                    title: `Products`
                 }
             }
         ]
