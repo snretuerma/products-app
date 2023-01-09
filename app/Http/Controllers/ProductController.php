@@ -20,8 +20,10 @@ class ProductController extends Controller
         $products = Product::query();
         if (request()->has('name') || request()->has('description') || request()->has('category')) {
             $products->where('name', 'like', '%' . request('name') . '%')
-                ->where('description', 'like', '%' . request('description') . '%')
-                ->where('category', 'like', '%' . request('category') . '%');
+                ->orWhere('description', 'like', '%' . request('description') . '%');
+            if (!empty(json_decode(request('category')))) {
+                $products->whereIn('category', json_decode(request('category')));
+            }
         }
         return $products->orderBy('id', 'DESC')->paginate(6);
     }
