@@ -86,6 +86,18 @@
                 </a-list-item>
             </template>
             <template #footer>
+                <div id="pagination-container">
+                    <a-row align="middle" justify="center">
+                        <a-col :span="24" type="flex" align="middle">
+                            <Bootstrap5Pagination
+                                :align="center"
+                                :data="product_list"
+                                @pagination-change-page="fetchList"
+                            />
+                        </a-col>
+                    </a-row>
+                </div>
+
                 <!-- <a-pagination
                     v-model:current="product_list.current_page"
                     :total="product_list.total"
@@ -124,11 +136,14 @@ import {
     DeleteOutlined,
     SettingOutlined,
 } from "@ant-design/icons-vue";
+import { Bootstrap5Pagination } from "laravel-vue-pagination";
+
 export default {
     components: {
         EditOutlined,
         DeleteOutlined,
         SettingOutlined,
+        Bootstrap5Pagination,
     },
     setup() {
         const router = useRouter();
@@ -139,11 +154,11 @@ export default {
         let product_list = ref([]);
         let loading = ref(true);
 
-        const fetchList = async () => {
+        const fetchList = async (page = 1) => {
             const response = await axios.get(
-                `/api/products?name=${search_text.value}&description=${
+                `/api/products?page=${page}&name=${
                     search_text.value
-                }&category=${
+                }&description=${search_text.value}&category=${
                     Array.isArray(search_category.value) ||
                     search_category.value.length > 0
                         ? JSON.stringify(search_category.value)
@@ -203,6 +218,8 @@ export default {
             goToCreateProductsPage,
             onSearch,
 
+            fetchList,
+
             category_options: [
                 { value: "Convenience goods", label: "Convenience goods" },
                 { value: "Shopping goods", label: "Shopping goods" },
@@ -213,3 +230,30 @@ export default {
     },
 };
 </script>
+
+<style>
+#pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 200px;
+}
+.pagination {
+    text-align: center;
+    min-width: 696px;
+    list-style: none;
+    padding-top: 20px;
+    text-align: center;
+}
+.page-item a {
+    display: inline;
+    color: black !important;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+}
+.pagination .active a {
+    background-color: #1890ff;
+    color: white !important;
+}
+</style>

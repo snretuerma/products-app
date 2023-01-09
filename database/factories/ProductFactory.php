@@ -18,9 +18,9 @@ class ProductFactory extends Factory
     {
         return [
             'name' => fake()->sentence(6, true),
-            'category' => fake()->randomElement(array ('a','b','c')),
+            'category' => fake()->randomElement(['Convenience goods', 'Shopping goods', 'Specialty goods', 'Unsought goods']),
             'description' => fake()->randomHtml(2, 3),
-            'images' => fake()->image(storage_path('images'),400,300, null, false),
+            'images' => fake()->image(storage_path('images'), 400, 300, null, false),
             'date_time' => now(),
         ];
     }
