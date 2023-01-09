@@ -16,8 +16,11 @@
             <template #header>
                 <a-page-header :ghost="false" title="Product List">
                     <template #extra>
-                        <a-button key="1" type="primary"
-                            >Create Product</a-button
+                        <a-button
+                            key="1"
+                            type="primary"
+                            @click.prevent="goToCreateProductsPage"
+                            >Add Product</a-button
                         >
                     </template>
                 </a-page-header>
@@ -134,6 +137,10 @@ export default {
                 : message.error(value.message);
         };
 
+        const goToCreateProductsPage = () => {
+            router.push({ name: "add_product" });
+        };
+
         onMounted(() => {
             fetchList();
         });
@@ -146,6 +153,7 @@ export default {
             showDeleteModal,
             hideDeleteModal,
             confirmDeleteModal,
+            goToCreateProductsPage,
         };
     },
 };

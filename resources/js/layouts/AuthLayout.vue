@@ -17,11 +17,15 @@
                 theme="dark"
                 mode="inline"
             >
-                <a-menu-item key="1">
+                <a-menu-item key="1" @click.prevent="goToProductsPage">
                     <shopping-outlined />
                     <span>Products</span>
                 </a-menu-item>
-                <a-menu-item key="2" @click.prevent="logout">
+                <a-menu-item key="2" @click.prevent="goToAddProductsPage">
+                    <appstore-add-outlined />
+                    <span>Add Product</span>
+                </a-menu-item>
+                <a-menu-item key="3" @click.prevent="logout">
                     <logout-outlined />
                     <span>Logout</span>
                 </a-menu-item>
@@ -48,16 +52,29 @@
 import { ref } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
-import { ShoppingOutlined, LogoutOutlined } from "@ant-design/icons-vue";
+import {
+    ShoppingOutlined,
+    LogoutOutlined,
+    AppstoreAddOutlined,
+} from "@ant-design/icons-vue";
 
 export default {
     components: {
         ShoppingOutlined,
         LogoutOutlined,
+        AppstoreAddOutlined,
     },
     setup() {
         const authStore = useAuthStore();
         const router = useRouter();
+
+        const goToProductsPage = () => {
+            router.push({ name: "products" });
+        };
+
+        const goToAddProductsPage = () => {
+            router.push({ name: "add_product" });
+        };
 
         const logout = () => {
             axios.post("/logout").then(async (response) => {
@@ -73,6 +90,8 @@ export default {
             logout,
             selectedKeys: ref(["1"]),
             collapsed: ref(false),
+            goToProductsPage,
+            goToAddProductsPage,
         };
     },
 };

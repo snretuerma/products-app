@@ -46,11 +46,20 @@ class ProductController extends Controller
     {
         DB::beginTransaction();
         try {
+            $images = [];
+            if (is_array($request->file('images'))) {
+                foreach ($request->file('images') as $file) {
+                    $name = time() . rand(1, 50) . '.' . $file->extension();
+                    $file->move(public_path('images/products'), $name);
+                    array_push($images, $name);
+                }
+            }
+
             $product = Product::create([
                 'name' => $request->name,
                 'category' => $request->category,
                 'description' => $request->description,
-                'images' => $request->images,
+                'images' => !empty($images) ? json_encode($images) : null,
                 'date_time' => $request->date_time
             ]);
         } catch (\Throwable $error) {

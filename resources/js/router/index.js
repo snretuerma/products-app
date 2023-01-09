@@ -10,6 +10,7 @@ const AuthLayout = () => import('@/layouts/AuthLayout.vue')
 
 /* Authenticated Component */
 const Products = () => import('@/pages/ProductsPage.vue')
+const AddProduct = () => import('@/pages/AddProductPage.vue')
 
 const routes = [
     {
@@ -34,6 +35,14 @@ const routes = [
                 component: Products,
                 meta: {
                     title: `Products`
+                }
+            },
+            {
+                name: 'add_product',
+                path: '/add_product',
+                component: AddProduct,
+                meta: {
+                    title: `Add Product`
                 }
             }
         ]
