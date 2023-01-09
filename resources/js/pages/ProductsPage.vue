@@ -23,6 +23,36 @@
                             >Add Product</a-button
                         >
                     </template>
+                    <div>
+                        <a-row :gutter="16">
+                            <a-col :span="12">
+                                <a-form-item label="Search" name="search">
+                                    <a-input
+                                        v-model:value="search_text"
+                                        placeholder="Search Name/Description"
+                                    />
+                                </a-form-item>
+                            </a-col>
+                            <a-col :span="10">
+                                <a-form-item label="Category" name="category">
+                                    <a-select
+                                        v-model:value="search_category"
+                                        mode="tags"
+                                        style="width: 100%"
+                                        placeholder="Categories"
+                                        :options="category_options"
+                                    ></a-select>
+                                </a-form-item>
+                            </a-col>
+                            <a-col :span="2">
+                                <a-button
+                                    type="primary"
+                                    @click.prevent="onSearch"
+                                    >Search</a-button
+                                >
+                            </a-col>
+                        </a-row>
+                    </div>
                 </a-page-header>
             </template>
             <template #renderItem="{ item }">
@@ -104,13 +134,28 @@ export default {
         const router = useRouter();
         let delete_modal_visible = ref(false);
         let selected_item = ref({});
+        let search_category = ref([]);
+        let search_text = ref("");
         let product_list = ref([]);
         let loading = ref(true);
 
         const fetchList = async () => {
-            const response = await axios.get("/api/products");
+            const response = await axios.get(
+                `/api/products?name=${search_text.value}&description=${
+                    search_text.value
+                }&category=${
+                    Array.isArray(search_category.value) ||
+                    search_category.value.length > 0
+                        ? JSON.stringify(search_category.value)
+                        : ""
+                }`
+            );
             product_list.value = await response.data;
             loading.value = false;
+        };
+
+        const onSearch = async () => {
+            fetchList();
         };
 
         const showDeleteModal = (item) => {
@@ -146,6 +191,8 @@ export default {
         });
 
         return {
+            search_text,
+            search_category,
             product_list,
             loading,
             selected_item,
@@ -154,6 +201,14 @@ export default {
             hideDeleteModal,
             confirmDeleteModal,
             goToCreateProductsPage,
+            onSearch,
+
+            category_options: [
+                { value: "Convenience goods", label: "Convenience goods" },
+                { value: "Shopping goods", label: "Shopping goods" },
+                { value: "Specialty goods", label: "Specialty goods" },
+                { value: "Unsought goods", label: "Unsought goods" },
+            ],
         };
     },
 };
