@@ -1,13 +1,16 @@
 <template>
     <div>
-        <a-page-header title="Add Product" @back="backToProductsPage" />
+        <a-page-header
+            :title="`${ui.add_edit} Product`"
+            @back="backToProductsPage"
+        />
         <a-form
             :model="form"
             name="form"
             :label-col="{ span: 8 }"
             :wrapper-col="{ span: 24 }"
             layout="vertical"
-            @finish="onSubmit"
+            @finish="onSubmit()"
             @finishFailed="onSubmitFailed"
         >
             <a-steps :current="current_step">
@@ -119,8 +122,9 @@
 </template>
 
 <script>
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useUIStore } from "@/stores/ui";
 import { message } from "ant-design-vue";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
@@ -142,6 +146,7 @@ export default {
     },
     setup() {
         const router = useRouter();
+        const ui = useUIStore();
         const current_step = ref(0);
         const form = reactive({
             name: "",
@@ -157,6 +162,8 @@ export default {
         };
 
         const backToProductsPage = () => {
+            ui.selected_item = {};
+            localStorage.removeItem("selected_item");
             router.push({ name: "products" });
         };
 
@@ -182,13 +189,51 @@ export default {
                     formData.append(`images[]`, file, file.name);
                 });
                 for (var key in form) formData.append(key, form[key] || "");
-                const response = await axios.post(
-                    "/api/products",
+                if (ui.add_edit == "Add") {
+                    const response = await axios.post(
+                        "/api/products",
+                        formData,
+                        config
+                    );
+                    manualFormReset();
+                    displayMessage(response.data);
+                } else {
+                    const response = await axios.post(
+                        `/api/products/${ui.selected_item.id}?_method=PUT`,
+                        formData,
+                        config
+                    );
+                    manualFormReset();
+                    displayMessage(response.data);
+                    ui.selected_item = {};
+                }
+                localStorage.removeItem("selected_item");
+                router.push({ name: "products" });
+            } else {
+                message.error("Product description is required");
+            }
+        };
+
+        const onEdit = async () => {
+            const config = {
+                headers: { "Content-Type": "multipart/form-data" },
+            };
+            if (form.description != null) {
+                let formData = new FormData();
+                fileList.value.forEach((file) => {
+                    formData.append(`images[]`, file, file.name);
+                });
+                console.log(form);
+                for (var key in form) formData.append(key, form[key] || "");
+                const response = await axios.patch(
+                    `/api/products/${ui.selected_item.id}`,
                     formData,
                     config
                 );
-                manualFormReset();
                 displayMessage(response.data);
+                ui.selected_item = {};
+                manualFormReset();
+                localStorage.removeItem("selected_item");
                 router.push({ name: "products" });
             } else {
                 message.error("Product description is required");
@@ -208,6 +253,19 @@ export default {
             form.date_time = "";
             fileList.value = [];
         };
+
+        const buildForm = () => {
+            form.name = ui.selected_item.name;
+            form.category = ui.selected_item.category;
+            form.description = ui.selected_item.description;
+            form.date_time = ui.selected_item.date_time;
+        };
+
+        onMounted(() => {
+            if (ui.selected_item != null) {
+                buildForm();
+            }
+        });
 
         return {
             current_step,
@@ -234,7 +292,7 @@ export default {
             onSubmit,
             onSubmitFailed,
             backToProductsPage,
-
+            ui,
             fileList,
 
             onFileSelected,

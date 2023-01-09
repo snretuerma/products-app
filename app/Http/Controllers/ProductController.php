@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
+
 
 class ProductController extends Controller
 {
@@ -118,7 +120,23 @@ class ProductController extends Controller
     {
         DB::beginTransaction();
         try {
-            $product = Product::findOrFail($id)->update($request->all());
+            $product = Product::findOrFail($id);
+            $product->update($request->except('images'));
+            $images = [];
+            if (is_array($request->file('images'))) {
+                foreach ($request->file('images') as $file) {
+                    $name = time() . rand(1, 50) . '.' . $file->extension();
+                    $file->move(public_path('images/products'), $name);
+                    array_push($images, $name);
+                }
+            }
+            if (is_array(json_decode($product->images))) {
+                File::delete($product->images);
+                $product->update(['images' => $images]);
+            } else {
+                $product->update(['images' => $images]);
+            }
+            $product->save();
         } catch (\Throwable $error) {
             DB::rollBack();
             return response()->json(
@@ -150,6 +168,9 @@ class ProductController extends Controller
     {
         DB::beginTransaction();
         try {
+            if (is_array(json_decode($product->images))) {
+                File::delete($product->images);
+            }
             $product->delete();
         } catch (\Throwable $error) {
             DB::rollBack();

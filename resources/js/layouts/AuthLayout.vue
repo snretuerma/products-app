@@ -51,6 +51,7 @@
 <script>
 import { ref } from "vue";
 import { useAuthStore } from "@/stores/auth";
+import { useUIStore } from "@/stores/ui";
 import { useRouter } from "vue-router";
 import {
     ShoppingOutlined,
@@ -66,13 +67,20 @@ export default {
     },
     setup() {
         const authStore = useAuthStore();
+        const ui = useUIStore();
         const router = useRouter();
 
         const goToProductsPage = () => {
+            localStorage.removeItem("selected_item");
             router.push({ name: "products" });
         };
 
         const goToAddProductsPage = () => {
+            ui.$patch({
+                add_edit: "Add",
+            });
+            localStorage.setItem("add_edit", "Add");
+            localStorage.removeItem("selected_item");
             router.push({ name: "add_product" });
         };
 
@@ -83,6 +91,7 @@ export default {
                     isLoggedIn: false,
                 });
                 localStorage.removeItem("auth");
+                localStorage.removeItem("selected_item");
                 router.push({ name: "login" });
             });
         };
