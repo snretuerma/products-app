@@ -15,9 +15,12 @@ use App\Http\Controllers\{UserController, ProductController};
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
-Route::resource('users', UserController::class)->except(['create', 'edit']);
-Route::resource('products', ProductController::class)->except(['create', 'edit']);
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('me', [AuthController::class, 'me']);
+    Route::resource('users', UserController::class)->except(['create', 'edit']);
+    Route::resource('products', ProductController::class)->except(['create', 'edit']);
+});
