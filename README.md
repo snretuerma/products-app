@@ -5,7 +5,7 @@
 ## Getting Started
 
 1. Clone the repository by running <br>
-   `  git clone`
+   `  git clone https://github.com/snretuerma/products-app.git`
 
 > **Note** : <br>
 >
