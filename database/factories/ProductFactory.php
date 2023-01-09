@@ -20,7 +20,7 @@ class ProductFactory extends Factory
             'name' => fake()->sentence(6, true),
             'category' => fake()->randomElement(['Convenience goods', 'Shopping goods', 'Specialty goods', 'Unsought goods']),
             'description' => fake()->randomHtml(2, 3),
-            'images' => fake()->image(storage_path('images'), 400, 300, null, false),
+            'images' => '[]',
             'date_time' => now(),
         ];
     }

@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{UserController, ProductController};
+use App\Http\Controllers\{AuthController, UserController, ProductController};
 
 /*
 |--------------------------------------------------------------------------

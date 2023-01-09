@@ -60,13 +60,24 @@
                     <a-card hoverable style="width: 450px">
                         <template #cover>
                             <img
+                                class="product_image"
+                                height="300"
+                                width="200"
                                 alt="example"
-                                src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+                                :src="
+                                    JSON.parse(item.images).length > 0
+                                        ? `../images/products/${
+                                              JSON.parse(item.images)[0]
+                                          }`
+                                        : '/placeholder.jpg'
+                                "
                             />
                         </template>
                         <template #actions>
-                            <setting-outlined key="setting" />
-                            <edit-outlined key="edit" />
+                            <edit-outlined
+                                key="edit"
+                                @click.prevent="selectEditItem(item)"
+                            />
                             <delete-outlined
                                 key="delete"
                                 @click.prevent="showDeleteModal(item)"
@@ -76,21 +87,16 @@
                             :title="item.name"
                             :description="item.category"
                         >
-                            <!-- <template #avatar>
-                                        <a-avatar
-                                            src="https://joeschmoe.io/api/v1/random"
-                                        />
-                                    </template> -->
                         </a-card-meta>
                     </a-card>
                 </a-list-item>
             </template>
             <template #footer>
                 <div id="pagination-container">
-                    <a-row align="middle" justify="center">
-                        <a-col :span="24" type="flex" align="middle">
+                    <a-row>
+                        <a-col :span="24">
                             <Bootstrap5Pagination
-                                :align="center"
+                                align="center"
                                 :data="product_list"
                                 @pagination-change-page="fetchList"
                             />
@@ -129,23 +135,20 @@
 
 <script>
 import { ref, onMounted } from "vue";
+import { useUIStore } from "@/stores/ui";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
-import {
-    EditOutlined,
-    DeleteOutlined,
-    SettingOutlined,
-} from "@ant-design/icons-vue";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons-vue";
 import { Bootstrap5Pagination } from "laravel-vue-pagination";
 
 export default {
     components: {
         EditOutlined,
         DeleteOutlined,
-        SettingOutlined,
         Bootstrap5Pagination,
     },
     setup() {
+        const ui = useUIStore();
         const router = useRouter();
         let delete_modal_visible = ref(false);
         let selected_item = ref({});
@@ -191,6 +194,18 @@ export default {
             displayMessage(response.data);
         };
 
+        const selectEditItem = (item) => {
+            ui.$patch({
+                selected_item: item,
+            });
+            ui.$patch({
+                add_edit: "Edit",
+            });
+            localStorage.setItem("add_edit", "Edit");
+            localStorage.setItem("selected_item", JSON.stringify(item));
+            router.push({ name: "add_product" });
+        };
+
         const displayMessage = (value) => {
             value.type == "success"
                 ? message.success(value.message)
@@ -198,6 +213,11 @@ export default {
         };
 
         const goToCreateProductsPage = () => {
+            ui.$patch({
+                add_edit: "Add",
+            });
+            localStorage.setItem("add_edit", "Add");
+            localStorage.removeItem("selected_item");
             router.push({ name: "add_product" });
         };
 
@@ -217,7 +237,7 @@ export default {
             confirmDeleteModal,
             goToCreateProductsPage,
             onSearch,
-
+            selectEditItem,
             fetchList,
 
             category_options: [
@@ -255,5 +275,8 @@ export default {
 .pagination .active a {
     background-color: #1890ff;
     color: white !important;
+}
+.product_image {
+    object-fit: cover;
 }
 </style>
